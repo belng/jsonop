@@ -1,7 +1,7 @@
 # jsonop
-JSON-encoded operations on JSON
+_JSON-encoded operations on JSON_
 
-It’s like $.extend(), but much more powerful; by assigning special meanings to the value `null` and the property name `"_"` (a single underscore) complex operations can be represented intuitively using JSON.
+It’s like `$.extend()`, but much more powerful. Complex operations can be represented intuitively using JSON by assigning special meanings to the value `null` and the property name `"_"` (a single underscore).
 
 ## Installation and usage
 ```sh
