@@ -14,16 +14,19 @@ jsonop = require("jsonop");
 ### Object Operations
 
 **1. Recursive merge (extend)**
+
 ```javascript
     jsonop({ a: 3, b: { c: 4 }}, { a: 5, b: { d: 6 }})
     // Returns { a: 5, b: { c: 4, d: 6 }}
 ```
 **2. Delete keys with `<key>: null`**
+
 ```javascript
   jsonop({ a: 3, b: 4 }, { a: null });
   // Returns { b: 4 }
 ```
 **3. Replace a subtree with `{ _: null, … }`**
+
 ```javascript
     jsonop({ a: 3, b: { c: 4 }}, { a: 5, b: { _: null, d: 6 }})
     // Returns { a: 5, b: { d: 6 }}
@@ -32,6 +35,7 @@ jsonop = require("jsonop");
 ### Array Operations
 
 **4. Replace array**
+
 ```javascript
     jsonop({ a: 3, b: [1, 2, 3]}, { b: [4, 5]})
     // Returns { a: 3, b: [4, 5]}
@@ -40,7 +44,9 @@ jsonop = require("jsonop");
 #### Array as List
 
 **5. Append items with `[null, …]`**
+
 Creates the array if it doesn’t exist.
+
 ```javascript
     jsonop({ a: 3, b: [1, 2, 3]}, { b: [null, 4, 5]})
     // Returns { a: 3, b: [1, 2, 3, 4, 5]}
@@ -50,14 +56,18 @@ Creates the array if it doesn’t exist.
 ```
 
 **6. Prepend items with `[…, null]`**
+
 Creates the array if it doesn’t exist.
+
 ```javascript
     jsonop({ a: 3, b: [1, 2, 3]}, { b: [4, 5, null]})
     // Returns { a: 3, b: [4, 5, 1, 2, 3]}
 ```
 
 **7. Splice with `{ _: [<index>, <remove_count>, <insert_items> ]}`**
+
 Remove or insert items at a specific index.
+
 _Spec under review; Not implemented._
 ```javascript
     jsonop({ a: 3, b: [1, 2, 3]}, { b: { _: [1, 1, 4, 5]}})
@@ -68,14 +78,18 @@ _Spec under review; Not implemented._
 Set operations only work correctly when items are primitives (strings or numbers).
 
 **8. Add items with `[null, …, null]`**
+
 Creates the array if it doesn’t exist. Skips duplicates.
+
 ```javascript
     jsonop({ a: 3, b: [1, 2, 3]}, { b: [null, 3, 5, null]})
     // Returns { a: 3, b: [4, 5, 1, 2, 3]}
 ```
 
 **9. Remove items with `{ _: <item> }`**
+
 _Not yet implemented._
+
 ```javascript
     jsonop({ a: 3, b: [1, 2, 3]}, { b: { _: 3 }})
     // Returns { a: 3, b: [1, 2]}
@@ -84,13 +98,16 @@ _Not yet implemented._
 #### Array as Tuple
 
 **10. Replace items with `{ <index>: <item> }`**
+
 _Not yet implemented._
+
 ```javascript
     jsonop({ a: 3, b: [1, 2, 3]}, { b: { _: 3 }})
     // Returns { a: 3, b: [1, 2]}
 ```
 
 ## Limitations
+
 - `null` cannot be used
 - `"_"` (a single underscore) cannot be used as a property name
 - Sets cannot contain objects or arrays
