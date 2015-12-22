@@ -1,10 +1,10 @@
 {
   "name": "jsonop",
-  "version": "1.0.0",
-  "description": "JSON-encoded operations on JSON",
+  "version": "2.0.0",
+  "description": "JSON-encoded operations on JSON documents",
   "main": "jsonop.js",
   "scripts": {
-    "test": "mocha"
+    "test": "jest"
   },
   "repository": {
     "type": "git",

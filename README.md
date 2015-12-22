@@ -1,97 +1,79 @@
 # jsonop
 JSON-encoded operations on JSON
 
-It’s like $.extend(), but much more powerful; by assigning special meanings to the value `null` and the property name `"_"` (a single underscore) complex operations can be represented intuitively using JSON.
+JSONOP is similar to $.extend but much more flexible. It is invoked as `jsonop(object, change)`.
 
-## Installation and usage
-```sh
-$ npm install jsonop
-```
+The default behavior for objects is recursive merge. For arrays and other
+values, the default behavior is replacement.
+
+The default can be modified using __op__ keys.
+
+Examples:
+
 ```javascript
-jsonop = require("jsonop");
+jsonop(
+    { foo: { bar: 3 } },
+    { foo: { baz: 4 } }
+) === { foo: { bar: 3, baz: 4 }
+
+jsonop(
+    { foo: { bar: 3 } },
+    { foo: { baz: 4, __op__: "replace" } }
+) === { foo: { baz: 4 } } // op can be defined inside the value it affects
+
+jsonop(
+    { foo: { bar: 3 } },
+    { foo: { baz: 4 }, __op__: { foo: "delete" } }
+) === { } // or outside
+
+jsonop(
+    { foo: [1, 2, 3] },
+    { foo: [4, 5], __op__: { foo: "splice" } }
+) === { foo: [1, 2, 3, 4, 5] } // and can work on any value
+
+jsonop(
+    { foo: 2, bar: 4 },
+    { foo: 3, baz: 5, __op__: { __any__: "inc" } }
+) === { foo: 5, bar: 4, baz: 5 } // __any__ is useful
+
+jsonop(
+    { foo: 6 },
+    { foo: 4, __op__: { foo: [ "mavg", 10 ] } }
+) === { foo: 5.8 } // __op__ with arguments
 ```
 
-### Object Operations
+### Supported Operations ###
 
-**1. Recursive merge (extend)**
-```javascript
-    jsonop({ a: 3, b: { c: 4 }}, { a: 5, b: { d: 6 }})
-    // Returns { a: 5, b: { c: 4, d: 6 }}
-```
-**2. Delete keys with `<key>: null`**
-```javascript
-  jsonop({ a: 3, b: 4 }, { a: null });
-  // Returns { b: 4 }
-```
-**3. Replace a subtree with `{ _: null, … }`**
-```javascript
-    jsonop({ a: 3, b: { c: 4 }}, { a: 5, b: { _: null, d: 6 }})
-    // Returns { a: 5, b: { d: 6 }}
-```
+#### All values ####
 
-### Array Operations
+- delete
+- keep (ignores change if value already exists)
 
-**4. Replace array**
-```javascript
-    jsonop({ a: 3, b: [1, 2, 3]}, { b: [4, 5]})
-    // Returns { a: 3, b: [4, 5]}
-```
+#### Numbers ####
+- inc (optional modulus)
+- mul (optional modulus)
+- min
+- max
+- mavg (approx. moving average; param: number of samples)
 
-#### Array as List
+#### Arrays ####
+- union (optional values to remove)
+- inter (optional values to add)
+- splice (insert pos, opt remove count, opt trim start/end; -ve pos from end)
+- merge (treat as tuple, skip nulls)
 
-**5. Append items with `[null, …]`**
-Creates the array if it doesn’t exist.
-```javascript
-    jsonop({ a: 3, b: [1, 2, 3]}, { b: [null, 4, 5]})
-    // Returns { a: 3, b: [1, 2, 3, 4, 5]}
-    
-    jsonop({ a: 3 }, { b: [null, 4, 5]})
-    // Returns { a: 3, b: [4, 5]}
-```
+#### Objects ##
+- replace (don't merge, just replace)
 
-**6. Prepend items with `[…, null]`**
-Creates the array if it doesn’t exist.
-```javascript
-    jsonop({ a: 3, b: [1, 2, 3]}, { b: [4, 5, null]})
-    // Returns { a: 3, b: [4, 5, 1, 2, 3]}
-```
+#### Strings ####
+- append (optional delimiter)
 
-**7. Splice with `{ _: [<index>, <remove_count>, <insert_items> ]}`**
-Remove or insert items at a specific index.
-_Spec under review; Not implemented._
-```javascript
-    jsonop({ a: 3, b: [1, 2, 3]}, { b: { _: [1, 1, 4, 5]}})
-    // Returns { a: 3, b: [1, 4, 5, 3]}
-```
+#### Bit fields ###
+- band
+- bor
+- bxor
 
-#### Array as Set
-Set operations only work correctly when items are primitives (strings or numbers).
-
-**8. Add items with `[null, …, null]`**
-Creates the array if it doesn’t exist. Skips duplicates.
-```javascript
-    jsonop({ a: 3, b: [1, 2, 3]}, { b: [null, 3, 5, null]})
-    // Returns { a: 3, b: [4, 5, 1, 2, 3]}
-```
-
-**9. Remove items with `{ _: <item> }`**
-_Not yet implemented._
-```javascript
-    jsonop({ a: 3, b: [1, 2, 3]}, { b: { _: 3 }})
-    // Returns { a: 3, b: [1, 2]}
-```
-
-#### Array as Tuple
-
-**10. Replace items with `{ <index>: <item> }`**
-_Not yet implemented._
-```javascript
-    jsonop({ a: 3, b: [1, 2, 3]}, { b: { _: 3 }})
-    // Returns { a: 3, b: [1, 2]}
-```
-
-## Limitations
-- `null` cannot be used
-- `"_"` (a single underscore) cannot be used as a property name
-- Sets cannot contain objects or arrays
-
+#### Booleans ###
+- and
+- or
+- not*
