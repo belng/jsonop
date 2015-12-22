@@ -1,14 +1,13 @@
 # jsonop
-JSON-encoded operations on JSON
+_JSON-encoded operations on JSON documents_
 
 JSONOP is similar to $.extend but much more flexible. It is invoked as `jsonop(object, change)`.
 
-The default behavior for objects is recursive merge. For arrays and other
-values, the default behavior is replacement.
+The general approach is that change contains new values to insert; if there’s already an old value at that location, a customizable update operation is performed.
 
-The default can be modified using __op__ keys.
+The default update operation for objects is recursive merge while for arrays and other it is replacement. However the default can be modified using `__op__` keys as shown in the examples below.
 
-Examples:
+#### Examples ####
 
 ```javascript
 jsonop(
