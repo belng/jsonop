@@ -94,14 +94,20 @@ function opval(a, b, i, op, stack) {
 	}
 }
 
-function jsonop (oa, ob, oops) {
-	const el = { _: oa }, stack = [ { a: el, b: { _: ob }, ops: { _: oops } } ];
+function jsonop (oa, ob, oop) {
+	const el = { _: oa }, stack = [ { a: el, b: { _: ob }, op: { _: oop } } ];
 
 	do {
 		const frame = stack.pop(),
-			a = frame.a, b = frame.b,
-			op = b.__op__ || frame.op,
-			map = op ? {} : b;
+			a = frame.a, b = frame.b;
+		let op, map;
+
+		if (frame.op && b.__op__) {
+			op = jsonop(frame.op, b.__op__);
+		} else {
+			op = b.__op__ || frame.op;
+		}
+		map = op ? {} : b;
 
 		if (op) {
 			for (const i in b) { if (i !== "__op__") { map[i] = true; } }

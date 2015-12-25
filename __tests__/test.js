@@ -1,6 +1,7 @@
 /* eslint-env jest */
 
 jest.dontMock("../jsonop");
+jest.autoMockOff();
 
 const jsonop = require("../jsonop");
 
@@ -26,10 +27,12 @@ describe("jsonop", () => {
 				g: [ 7, null, null, 8 ],
 
 				__op__: {
-					c: "replace",
 					e: { foo: [ "append", " " ] },
 					g: "merge"
 				}
+			},
+			{
+				c: "replace"
 			}
 		)).toEqual(
 			{
