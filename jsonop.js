@@ -49,6 +49,18 @@ const opfn = {
 };
 
 function deleteOps(obj) {
+	const stack = [ obj ];
+
+	do {
+		const o = stack.pop();
+
+		delete stack.__op__;
+		for (const i in o) {
+			if (typeof o[i] === "object" && o[i] !== null) {
+				stack.push(o[i]);
+			}
+		}
+	} while (stack.length);
 	return obj;
 }
 
@@ -70,7 +82,7 @@ function opval(a, b, i, op, stack) {
 	) {
 		stack.push({ a: a[i], b: b[i] });
 	} else if (Array.isArray(b) && b[i] === null) {
-		/* do nothing */
+		// While merging arrays, skip nulls
 	} else if (
 		typeof b[i] === "object" && typeof a[i] === "object" &&
 		b[i] !== null && a[i] !== null &&
@@ -84,7 +96,7 @@ function opval(a, b, i, op, stack) {
 
 function jsonop (oa, ob, oops) {
 	const el = { _: oa }, stack = [ { a: el, b: { _: ob }, ops: { _: oops } } ];
-	
+
 	do {
 		const frame = stack.pop(),
 			a = frame.a, b = frame.b,
