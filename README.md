@@ -1,4 +1,5 @@
-# jsonop
+jsonop
+======
 _JSON-encoded operations on JSON documents_
 
 JSONOP is similar to $.extend but much more flexible. It is invoked as `jsonop(object, change)`.
@@ -32,7 +33,7 @@ jsonop(
 
 jsonop(
     { foo: 2, bar: 4 },
-    { foo: 3, baz: 5, __op__: { __any__: "inc" } }
+    { foo: 3, baz: 5, __op__: { __all__: "inc" } }
 ) === { foo: 5, bar: 4, baz: 5 } // __any__ is useful
 
 jsonop(
