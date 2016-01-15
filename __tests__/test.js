@@ -52,9 +52,9 @@ describe("jsonop", () => {
 	
 	it("test 2", () => {
 		expect(jsonop(
-			{ foo: 2, bar: 4 },
-			{ foo: 3, baz: 5, __op__: { __any__: "inc" } }
-		)).toEqual({ foo: 5, bar: 4, baz: 5 });
+			{ foo: 2, bar: 1, baz: 2 },
+			{ foo: 3, bar: 1, baz: 6}, { __all__: "inc" }
+		)).toEqual({ foo: 5, bar: 2, baz: 8});
 	});
 	
 	it("test 3", () => {
