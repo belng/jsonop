@@ -15,7 +15,8 @@ describe("jsonop", () => {
 				d: { foo: 4 },
 				e: { foo: "Hello" },
 				f: [ 1, 2, 3, 4, 5 ],
-				g: [ 1, 2, 3, 4, 5 ]
+				g: [ 1, 2, 3, 4, 5 ],
+				h: { a: 1, b: 3 }
 			},
 			{
 				a: { bar: "i", baz: 4 },
@@ -25,14 +26,15 @@ describe("jsonop", () => {
 				e: { foo: "World" },
 				f: [ 7, 8, 9 ],
 				g: [ 7, null, null, 8 ],
-
+				h: { a: 2, b: 5 },
 				__op__: {
 					e: { foo: [ "append", " " ] },
 					g: "merge"
 				}
 			},
 			{
-				c: "replace"
+				c: "replace",
+				h: { __all__: "inc" }
 			}
 		)).toEqual(
 			{
@@ -42,7 +44,8 @@ describe("jsonop", () => {
 				d: { foo: 6 },
 				e: { foo: "Hello World" },
 				f: [ 7, 8, 9 ],
-				g: [ 7, 2, 3, 8, 5 ] 
+				g: [ 7, 2, 3, 8, 5 ],
+				h: { a: 3, b: 8 }
 			}
 		);
 	});
@@ -59,5 +62,5 @@ describe("jsonop", () => {
 			{ foo: 6 },
 			{ foo: 4, __op__: { foo: [ "mavg", 10 ] } }
 		)).toEqual({ foo: 5.8 });
-	})
+	});
 });

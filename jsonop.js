@@ -2,8 +2,8 @@
 
 const opfn = {
 	keep: (a) => a,
-	inc: (a, b, params) => params[0] ? (a + b) % params[0] : a + b,
-	mul: (a, b, params) => params[0] ? (a * b) % params[0] : a * b,
+	inc: (a, b, params) => (params && params[0]) ? (a + b) % params[0] : a + b,
+	mul: (a, b, params) => (params && params[0]) ? (a * b) % params[0] : a * b,
 	min: (a, b) => Math.min(a, b),
 	max: (a, b) => Math.max(a, b),
 	mavg: (a, b, params) => (a * (params[0] - 1) + b) / params[0],
