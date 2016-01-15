@@ -42,7 +42,22 @@ describe("jsonop", () => {
 				d: { foo: 6 },
 				e: { foo: "Hello World" },
 				f: [ 7, 8, 9 ],
-				g: [ 7, 2, 3, 8, 5 ] }
+				g: [ 7, 2, 3, 8, 5 ] 
+			}
 		);
 	});
+	
+	it("test 2", () => {
+		expect(jsonop(
+			{ foo: 2, bar: 4 },
+			{ foo: 3, baz: 5, __op__: { __any__: "inc" } }
+		)).toEqual({ foo: 5, bar: 4, baz: 5 });
+	});
+	
+	it("test 3", () => {
+		expect(jsonop(
+			{ foo: 6 },
+			{ foo: 4, __op__: { foo: [ "mavg", 10 ] } }
+		)).toEqual({ foo: 5.8 });
+	})
 });
