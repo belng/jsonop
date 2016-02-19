@@ -1,11 +1,11 @@
 {
   "name": "jsonop",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "JSON-encoded operations on JSON documents",
-  "main": "dist/jsonop.js",
+  "main": "dist/jsonop",
   "scripts": {
     "test": "jest",
-    "prepublish": "if [[ ! -d dist ]]; then mkdir dist; fi; ./node_modules/babel-cli/bin/babel.js --presets es2015 -d dist/ jsonop.js"
+    "prepublish": "if [[ ! -d dist ]]; then mkdir dist; fi; ./node_modules/babel-cli/bin/babel.js --presets es2015 -d dist/ src/"
   },
   "repository": {
     "type": "git",
