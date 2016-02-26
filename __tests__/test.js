@@ -49,18 +49,48 @@ describe("jsonop", () => {
 			}
 		);
 	});
-	
+
 	it("test 2", () => {
 		expect(jsonop(
 			{ foo: 2, bar: 1, baz: 2 },
 			{ foo: 3, bar: 1, baz: 6}, { __all__: "inc" }
 		)).toEqual({ foo: 5, bar: 2, baz: 8});
 	});
-	
+
 	it("test 3", () => {
 		expect(jsonop(
 			{ foo: 6 },
 			{ foo: 4, __op__: { foo: [ "mavg", 10 ] } }
 		)).toEqual({ foo: 5.8 });
+	});
+
+	it.only("test 4", () => {
+		expect(jsonop(
+			{},
+			{
+				key1: {
+					key2: {
+						key3: 'value3'
+					}
+				},
+				key4: {
+					key5: {
+						key6: 'value6'
+					}
+				}
+			}
+		)).toEqual(
+		{
+			key1: {
+				key2: {
+					key3: 'value3'
+				}
+			},
+			key4: {
+				key5: {
+					key6: 'value6'
+				}
+			}
+		});
 	});
 });

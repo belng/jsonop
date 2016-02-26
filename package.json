@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/scrollback/jsonop/issues"
   },
-  "homepage": "https://github.com/scrollback/jsonop#readme"
+  "homepage": "https://github.com/scrollback/jsonop#readme",
+  "devDependencies": {
+    "jest": "^0.1.40",
+    "jest-cli": "^0.8.2"
+  }
 }
