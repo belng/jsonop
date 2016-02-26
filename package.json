@@ -5,7 +5,7 @@
   "main": "dist/jsonop",
   "scripts": {
     "test": "jest",
-    "prepublish": "./node_modules/babel-cli/bin/babel.js --presets es2015 -sd dist/ src/"
+    "prepublish": "./node_modules/babel-cli/bin/babel.js --presets es2015-loose -sd dist/ src/"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "jest-cli": "^0.8.2",
     "babel-cli": "^6.4.0",
     "babel-eslint": "^4.1.5",
-    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-es2015-loose": "*",
     "eslint": "^1.9.0"
   }
 }
