@@ -1,9 +1,9 @@
 /* eslint-env jest */
 
-jest.dontMock("../jsonop");
+jest.dontMock("../src/jsonop");
 jest.autoMockOff();
 
-const jsonop = require("../jsonop");
+const jsonop = require("../src/jsonop");
 
 describe("jsonop", () => {
 	it("kitchen sink", () => {
@@ -53,8 +53,8 @@ describe("jsonop", () => {
 	it("test 2", () => {
 		expect(jsonop(
 			{ foo: 2, bar: 1, baz: 2 },
-			{ foo: 3, bar: 1, baz: 6}, { __all__: "inc" }
-		)).toEqual({ foo: 5, bar: 2, baz: 8});
+			{ foo: 3, bar: 1, baz: 6 }, { __all__: "inc" }
+		)).toEqual({ foo: 5, bar: 2, baz: 8 });
 	});
 
 	it("test 3", () => {
