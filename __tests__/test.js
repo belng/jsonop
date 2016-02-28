@@ -63,4 +63,11 @@ describe("jsonop", () => {
 			{ foo: 4, __op__: { foo: [ "mavg", 10 ] } }
 		)).toEqual({ foo: 5.8 });
 	});
+
+	it("null over null", () => {
+		expect(jsonop(
+			{ entities: { alice: null } },
+			{ entities: { alice: null }, knowledge: { } }
+		)).toEqual({ entities: { alice: null }, knowledge: { } });
+	});
 });
