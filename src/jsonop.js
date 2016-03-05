@@ -64,13 +64,14 @@ function deleteOps(obj) {
 	return obj;
 }
 
+function isOp(op) {
+	return typeof op === "string" || Array.isArray(op);
+}
+
 function opval(a, b, i, op, stack) {
 	if (op === "delete" || op && op[0] === "delete") {
 		delete a[i];
-	} else if (
-		op && (typeof op === "string" || Array.isArray(op)) &&
-		op !== "merge" && op[0] !== "merge"
-	) {
+	} else if (op && isOp(op) && op !== "merge" && op[0] !== "merge") {
 		if (Array.isArray(op)) {
 			a[i] = deleteOps(opfn[op.shift()](a[i], b[i], op));
 		} else {
@@ -120,7 +121,8 @@ function jsonop (oa, ob, oop) {
 		}
 
 		for (const i in map) {
-			opval(a, b, i, op && (op[i] || op.__all__), stack);
+			opval(a, b, i, b[i] && isOp(b[i].__op__) ? b[i].__op__ :
+				op && (op[i] || op.__all__), stack);
 		}
 	} while (stack.length);
 

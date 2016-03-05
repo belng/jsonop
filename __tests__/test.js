@@ -20,7 +20,7 @@ describe("jsonop", () => {
 			},
 			{
 				a: { bar: "i", baz: 4 },
-				b: { __op__: { foo: "delete" } },
+				b: { foo: { __op__: "delete" } },
 				c: { bar: "i", baz: 4 },
 				d: { foo: 2, __op__: { foo: [ "inc" ] } },
 				e: { foo: "World" },
