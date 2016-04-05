@@ -9,20 +9,22 @@ function jsonop (oa, ob, oop) {
 		min: (a, b) => Math.min(a, b),
 		max: (a, b) => Math.max(a, b),
 		mavg: (a, b, params) => (a * (params[0] - 1) + b) / params[0],
-		union: (a, b, params) => {
-			const map = {};
+		union: (a, b, p) => {
+			var arr = a.concat(b), result = [], map = {},
+				params = p || {};
 
-			for (const i of a) { map[i] = true; }
-			for (const i of params) { delete map[i]; }
-			for (const i of b) { map[i] = true; }
+			arr.forEach(function(e) {
+				if (!map[e] && !params[e]) result.push(e);
+				map[e] = true;
+			});
 
-			return Object.keys(map);
+			return result;
 		},
 		inter: (a, b, params) => {
 			const map = {};
 
 			for (const i of b) { if (i in a) { map[i] = true; } }
-			for (const i in params) { map[i] = true; }
+			if (params) for (const i in params) { map[i] = true; }
 
 			return Object.keys(map);
 		},
@@ -96,11 +98,16 @@ function jsonop (oa, ob, oop) {
 		}
 	}
 
+	let count = 0;
 	do {
 		const frame = stack.pop(),
 			a = frame.a, b = frame.b;
 		let op, map;
 
+		count++;
+		if (count > 1000) {
+			throw Error('Cycle?');
+		}
 		if (frame.op && b.__op__) {
 			op = jsonop(frame.op, b.__op__);
 		} else {

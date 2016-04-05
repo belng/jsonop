@@ -29,7 +29,8 @@ describe("jsonop", () => {
 				h: { a: 2, b: 5 },
 				__op__: {
 					e: { foo: [ "append", " " ] },
-					g: "merge"
+					g: "merge",
+					f: "splice"
 				}
 			},
 			{
@@ -64,7 +65,7 @@ describe("jsonop", () => {
 		)).toEqual({ foo: 5.8 });
 	});
 
-	it.only("test 4", () => {
+	it("test 4", () => {
 		expect(jsonop(
 			{},
 			{
@@ -92,5 +93,28 @@ describe("jsonop", () => {
 				}
 			}
 		});
+	});
+
+
+	it("test 5", () => {
+		console.log("+++++++++++");
+		expect(jsonop(
+			{
+				"key1": "hello",
+				"key2": "world",
+			},
+			{
+				__op__: {
+					"key1": "delete"
+				}
+			}
+		)).toEqual({
+			"key2": "world",
+		});
+	});
+
+
+	it("Array union", () => {
+		expect(jsonop([ 1, 2 ], [ 3 ], "union")).toEqual([ 1, 2, 3 ]);
 	});
 });
