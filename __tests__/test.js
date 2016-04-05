@@ -20,7 +20,7 @@ describe("jsonop", () => {
 			},
 			{
 				a: { bar: "i", baz: 4 },
-				b: { __op__: { foo: "delete" } },
+				b: { foo: { __op__: "delete" } },
 				c: { bar: "i", baz: 4 },
 				d: { foo: 2, __op__: { foo: [ "inc" ] } },
 				e: { foo: "World" },
@@ -116,5 +116,11 @@ describe("jsonop", () => {
 
 	it("Array union", () => {
 		expect(jsonop([ 1, 2 ], [ 3 ], "union")).toEqual([ 1, 2, 3 ]);
+	});
+	it("null over null", () => {
+		expect(jsonop(
+			{ entities: { alice: null } },
+			{ entities: { alice: null }, knowledge: { } }
+		)).toEqual({ entities: { alice: null }, knowledge: { } });
 	});
 });
