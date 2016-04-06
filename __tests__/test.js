@@ -117,6 +117,20 @@ describe("jsonop", () => {
 	it("Array union", () => {
 		expect(jsonop([ 1, 2 ], [ 3 ], "union")).toEqual([ 1, 2, 3 ]);
 	});
+	it("Array union with items to remove", () => {
+		expect(jsonop([ 1, 2 ], [ 3 ], ["union", 1])).toEqual([ 2, 3 ]);
+	});
+
+	it("Array union with items to remove in second argument", () => {
+		expect(jsonop([ 1, 2 ], {__op__: ["union", 1]}, {})).toEqual([ 2 ]);
+	});
+
+	it.only("Array union with items to remove in second argument", () => {
+		var b = [3, 4];
+		b.__op__ = ["union", 1];
+		expect(jsonop([ 1, 2 ], b, "union")).toEqual([ 2, 3, 4 ]);
+	});
+
 	it("null over null", () => {
 		expect(jsonop(
 			{ entities: { alice: null } },
