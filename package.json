@@ -1,13 +1,13 @@
 {
   "name": "jsonop",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "JSON-encoded operations on JSON documents",
   "main": "dist/jsonop",
   "scripts": {
     "test": "jest",
     "prepublish": "./node_modules/babel-cli/bin/babel.js --presets es2015-loose -sd dist/ src/"
   },
-  "repository": {
+  "repository": {`
     "type": "git",
     "url": "git+https://github.com/scrollback/jsonop.git"
   },
