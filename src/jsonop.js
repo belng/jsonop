@@ -84,7 +84,7 @@ function jsonop(oa, ob, oop) {
 				delete a[i];
 			} else if (op && isOp(op) && op !== "merge" && op[0] !== "merge") {
 				if (Array.isArray(op)) {
-					a[i] = deleteOps(opfn[op.shift()](a[i], b[i], op));
+					a[i] = deleteOps(opfn[op[0]](a[i], b[i], op));
 				} else {
 					a[i] = deleteOps(opfn[op](a[i], b[i]));
 				}
