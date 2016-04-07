@@ -12,7 +12,6 @@ function jsonop(oa, ob, oop) {
 			max: (a, b) => Math.max(a, b),
 			mavg: (a, b, params) => (a * (params[0] - 1) + b) / params[0],
 			union: (a, b, p) => {
-				console.log("union", a,b,p);
 				var arr = Array.isArray(b) ? a.concat(b) : a, result = [], map = {},
 					params = p || [];
 
@@ -77,9 +76,6 @@ function jsonop(oa, ob, oop) {
 		}
 
 		function opval(a, b, i, op, stack) {
-
-			console.log(a, b, i, op, stack);
-
 			if (op === "delete" || op && op[0] === "delete") {
 				delete a[i];
 			} else if (op && isOp(op) && op !== "merge" && op[0] !== "merge") {
