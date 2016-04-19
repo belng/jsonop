@@ -1,58 +1,60 @@
 "use strict";
 
+const opfn = {
+	keep: (a) => a,
+	inc: (a, b, params) => (params && params[0]) ? (a + b) % params[0] : a + b,
+	mul: (a, b, params) => (params && params[0]) ? (a * b) % params[0] : a * b,
+	min: (a, b) => Math.min(a, b),
+	max: (a, b) => Math.max(a, b),
+	mavg: (a, b, params) => (a * (params[0] - 1) + b) / params[0],
+	union: (a, b, p) => {
+		var arr = Array.isArray(b) ? a.concat(b) : a, result = [], map = {},
+			params = p || [];
+
+		arr.forEach(function(e) {
+			if (!map[e] && params.indexOf(e) < 0) result.push(e);
+			map[e] = true;
+		});
+
+		return result;
+	},
+	inter: (a, b, params) => {
+		const map = {};
+
+		for (const i of b) { if (i in a) { map[i] = true; } }
+		if (params) for (const i in params) { map[i] = true; }
+
+		return Object.keys(map);
+	},
+	splice: (a, b, params) => {
+		if (params.length >= 2) {
+			a.splice(
+				params[0] === null ? Infinity : params[0], params[1], ...b
+			);
+		}
+		if (params.length >= 4) {
+			return a.slice(
+				params[2] === null ? Infinity : params[2],
+				params[3] === null ? Infinity : params[3]
+			);
+		} else { return a; }
+	},
+	replace: (a, b) => b,
+	append: (a, b, params) => a + (params[0] || "") + b,
+	band: (a, b) => a & b,
+	bor: (a, b) => a | b,
+	bxor: (a, b) => a ^ b,
+	and: (a, b) => a && b,
+	or: (a, b) => a || b,
+	not: (a) => !a
+	// delete and merge are handled separately below
+};
+
+
 function jsonop(oa, ob, oop) {
 	function fn (oa, ob, oop) {
 		const el = { _: oa }, stack = [ { a: el, b: { _: ob }, op: { _: oop } } ];
 
-		const opfn = {
-			keep: (a) => a,
-			inc: (a, b, params) => (params && params[0]) ? (a + b) % params[0] : a + b,
-			mul: (a, b, params) => (params && params[0]) ? (a * b) % params[0] : a * b,
-			min: (a, b) => Math.min(a, b),
-			max: (a, b) => Math.max(a, b),
-			mavg: (a, b, params) => (a * (params[0] - 1) + b) / params[0],
-			union: (a, b, p) => {
-				var arr = Array.isArray(b) ? a.concat(b) : a, result = [], map = {},
-					params = p || [];
-
-				arr.forEach(function(e) {
-					if (!map[e] && params.indexOf(e) < 0) result.push(e);
-					map[e] = true;
-				});
-
-				return result;
-			},
-			inter: (a, b, params) => {
-				const map = {};
-
-				for (const i of b) { if (i in a) { map[i] = true; } }
-				if (params) for (const i in params) { map[i] = true; }
-
-				return Object.keys(map);
-			},
-			splice: (a, b, params) => {
-				if (params.length >= 2) {
-					a.splice(
-						params[0] === null ? Infinity : params[0], params[1], ...b
-					);
-				}
-				if (params.length >= 4) {
-					return a.slice(
-						params[2] === null ? Infinity : params[2],
-						params[3] === null ? Infinity : params[3]
-					);
-				} else { return a; }
-			},
-			replace: (a, b) => b,
-			append: (a, b, params) => a + (params[0] || "") + b,
-			band: (a, b) => a & b,
-			bor: (a, b) => a | b,
-			bxor: (a, b) => a ^ b,
-			and: (a, b) => a && b,
-			or: (a, b) => a || b,
-			not: (a) => !a
-			// delete and merge are handled separately below
-		};
 
 		function deleteOps(obj) {
 			const stack = [ obj ];

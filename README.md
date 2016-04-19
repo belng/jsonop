@@ -47,18 +47,19 @@ jsonop(
 #### All values ####
 
 - delete
-- keep (ignores change if value already exists)
+- keep (ignore change if value already exists)
 
 #### Numbers ####
-- inc (optional modulus)
-- mul (optional modulus)
+- inc
+- mul
 - min
 - max
 - mavg (approx. moving average; param: number of samples)
+- mod  (modulus)
 
 #### Arrays ####
-- union (optional values to remove)
-- inter (optional values to add)
+- union
+- inter
 - splice (insert pos, opt remove count, opt trim start/end; -ve pos from end)
 - merge (treat as tuple, skip nulls)
 
