@@ -125,7 +125,7 @@ describe("jsonop", () => {
 		expect(jsonop([ 1, 2 ], {__op__: ["union", 1]}, {})).toEqual([ 2 ]);
 	});
 
-	it.only("Array union with items to remove in second argument", () => {
+	it("Array union with items to remove in second argument", () => {
 		var b = [3, 4];
 		b.__op__ = ["union", 1];
 		expect(jsonop([ 1, 2 ], b, "union")).toEqual([ 2, 3, 4 ]);
@@ -137,4 +137,12 @@ describe("jsonop", () => {
 			{ entities: { alice: null }, knowledge: { } }
 		)).toEqual({ entities: { alice: null }, knowledge: { } });
 	});
+
+	it("inc on empty object", () => {
+		var y = { foo: 2, bar: 4, counts: {} }
+		expect(jsonop(
+			y.counts,
+			{text: 3, __op__: { text: "inc" }}
+		)).toEqual({ foo: 2, bar: 4, counts: { text: 3 } })
+	})
 });
