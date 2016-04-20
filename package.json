@@ -1,6 +1,6 @@
 {
   "name": "jsonop",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "JSON-encoded operations on JSON documents",
   "main": "dist/jsonop",
   "scripts": {
