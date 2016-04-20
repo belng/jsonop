@@ -44,7 +44,7 @@ describe("jsonop", () => {
 				c: { bar: "i", baz: 4 },
 				d: { foo: 6 },
 				e: { foo: "Hello World" },
-				f: [ 7, 8, 9 ],
+				f: [ 1, 2, 3, 4, 5, 7, 8, 9 ],
 				g: [ 7, 2, 3, 8, 5 ],
 				h: { a: 3, b: 8 }
 			}
@@ -139,10 +139,10 @@ describe("jsonop", () => {
 	});
 
 	it("inc on empty object", () => {
-		var y = { foo: 2, bar: 4, counts: {} }
+		var y = {};
 		expect(jsonop(
-			y.counts,
+			y,
 			{text: 3, __op__: { text: "inc" }}
-		)).toEqual({ foo: 2, bar: 4, counts: { text: 3 } })
+		)).toEqual({ text: 3 })
 	})
 });

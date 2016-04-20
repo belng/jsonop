@@ -31,17 +31,24 @@ function jsonop(oa, ob, oop) {
 				return Object.keys(map);
 			},
 			splice: (a, b, params) => {
-				if (params.length >= 2) {
-					a.splice(
-						params[0] === null ? Infinity : params[0], params[1], ...b
-					);
+				if (!params || !params.length) {
+					return a.concat(b);
 				}
+
 				if (params.length >= 4) {
 					return a.slice(
 						params[2] === null ? Infinity : params[2],
 						params[3] === null ? Infinity : params[3]
 					);
-				} else { return a; }
+				}
+
+				if (params.length >= 2) {
+					return a.splice(
+						params[0] === null ? Infinity : params[0], params[1], ...b
+					);
+				}
+
+				return a;
 			},
 			replace: (a, b) => b,
 			append: (a, b, params) => a + (params[0] || "") + b,
@@ -78,9 +85,12 @@ function jsonop(oa, ob, oop) {
 		function opval(a, b, i, op, stack) {
 			if (op === "delete" || op && op[0] === "delete") {
 				delete a[i];
-			} else if (op && isOp(op) && op !== "merge" && op[0] !== "merge") {
+			} else if (
+				typeof a[i] !== "undefined" && op && isOp(op) &&
+				op !== "merge" && op[0] !== "merge"
+			) {
 				if (Array.isArray(op)) {
-					a[i] = deleteOps(opfn[op[0]](a[i], b[i], op));
+					a[i] = deleteOps(opfn[op[0]](a[i], b[i], op.slice(1)));
 				} else {
 					a[i] = deleteOps(opfn[op](a[i], b[i]));
 				}
