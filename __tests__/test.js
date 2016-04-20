@@ -144,5 +144,13 @@ describe("jsonop", () => {
 			y,
 			{text: 3, __op__: { text: "inc" }}
 		)).toEqual({ text: 3 })
+	});
+
+	it("inc on null", () => {
+		var y = null;
+		expect(jsonop(
+			y,
+			{text: 3, __op__: { text: "inc" }}
+		)).toEqual({text: 3});
 	})
 });
