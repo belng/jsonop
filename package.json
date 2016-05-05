@@ -1,6 +1,6 @@
 {
   "name": "jsonop",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "JSON-encoded operations on JSON documents",
   "main": "dist/jsonop",
   "scripts": {
@@ -21,13 +21,14 @@
   "bugs": {
     "url": "https://github.com/scrollback/jsonop/issues"
   },
+  "ava": {
+    "files": [
+      "**/*.test.js"
+    ]
+  },
   "homepage": "https://github.com/scrollback/jsonop#readme",
   "devDependencies": {
-    "jest": "^0.1.40",
-    "jest-cli": "^0.8.2",
-    "babel-cli": "^6.4.0",
-    "babel-eslint": "^4.1.5",
-    "babel-preset-es2015-loose": "*",
+    "ava": "^0.14.0",
     "eslint": "^1.9.0"
   }
 }
