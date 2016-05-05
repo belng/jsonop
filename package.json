@@ -2,10 +2,9 @@
   "name": "jsonop",
   "version": "3.0.0",
   "description": "JSON-encoded operations on JSON documents",
-  "main": "dist/jsonop",
+  "main": "src/jsonop",
   "scripts": {
-    "test": "jest",
-    "prepublish": "./node_modules/babel-cli/bin/babel.js --presets es2015-loose -sd dist/ src/"
+    "test": "ava"
   },
   "repository": {
     "type": "git",
