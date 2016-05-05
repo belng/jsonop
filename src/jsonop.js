@@ -1,154 +1,169 @@
+/*
+	This file is intentionally written in ES3.
+*/
+
 "use strict";
 
-function jsonop(oa, ob, oop) {
-	function fn (oa, ob, oop) {
-		const el = { _: oa }, stack = [ { a: el, b: { _: ob }, op: { _: oop } } ];
+function JO (left, right, apply) {
+	var opfn;
 
-		const opfn = {
-			keep: (a) => a,
-			inc: (a, b, params) => (params && params[0]) ? (a + b) % params[0] : a + b,
-			mul: (a, b, params) => (params && params[0]) ? (a * b) % params[0] : a * b,
-			min: (a, b) => Math.min(a, b),
-			max: (a, b) => Math.max(a, b),
-			mavg: (a, b, params) => (a * (params[0] - 1) + b) / params[0],
-			union: (a, b, p) => {
-				var arr = Array.isArray(b) ? a.concat(b) : a, result = [], map = {},
-					params = p || [];
-
-				arr.forEach(function(e) {
-					if (!map[e] && params.indexOf(e) < 0) result.push(e);
-					map[e] = true;
-				});
-
-				return result;
-			},
-			inter: (a, b, params) => {
-				const map = {};
-
-				for (const i of b) { if (i in a) { map[i] = true; } }
-				if (params) for (const i in params) { map[i] = true; }
-
-				return Object.keys(map);
-			},
-			splice: (a, b, params) => {
-				if (!params || !params.length) {
-					return a.concat(b);
-				}
-
-				if (params.length >= 4) {
-					return a.slice(
-						params[2] === null ? Infinity : params[2],
-						params[3] === null ? Infinity : params[3]
-					);
-				}
-
-				if (params.length >= 2) {
-					return a.splice(
-						params[0] === null ? Infinity : params[0], params[1], ...b
-					);
-				}
-
-				return a;
-			},
-			replace: (a, b) => b,
-			append: (a, b, params) => a + (params[0] || "") + b,
-			band: (a, b) => a & b,
-			bor: (a, b) => a | b,
-			bxor: (a, b) => a ^ b,
-			and: (a, b) => a && b,
-			or: (a, b) => a || b,
-			not: (a) => !a
-			// delete and merge are handled separately below
-		};
-
-		function deleteOps(obj) {
-			const stack = [ obj ];
-
-			do {
-				const o = stack.pop();
-
-				delete stack.__op__;
-				for (const i in o) {
-					if (typeof o[i] === "object" && o[i] !== null) {
-						stack.push(o[i]);
-					}
-				}
-			} while (stack.length);
-			return obj;
-		}
-
-
-		function isOp(op) {
-			return typeof op === "string" || Array.isArray(op);
-		}
-
-		function opval(a, b, i, op, stack) {
-			if (op === "delete" || op && op[0] === "delete") {
-				delete a[i];
-			} else if (
-				typeof a[i] !== "undefined" && op && isOp(op) &&
-				op !== "merge" && op[0] !== "merge"
-			) {
-				if (Array.isArray(op)) {
-					a[i] = deleteOps(opfn[op[0]](a[i], b[i], op.slice(1)));
-				} else {
-					a[i] = deleteOps(opfn[op](a[i], b[i]));
-				}
-			} else if (
-				Array.isArray(b[i]) && Array.isArray(a[i]) &&
-				(op === "merge" || op && op[0] === "merge")
-			) {
-				stack.push({ a: a[i], b: b[i] });
-			} else if (Array.isArray(b) && b[i] === null) {
-				// While merging arrays, skip nulls
-			} else if (
-				typeof b[i] === "object" && typeof a[i] === "object" &&
-				b[i] !== null && a[i] !== null &&
-				!Array.isArray(a[i]) && !Array.isArray(b[i])
-			) {
-				stack.push({ a: a[i], b: b[i], op });
-			} else {
-				a[i] = b[i];
-			}
-		}
-
-		let count = 0;
-		do {
-			const frame = stack.pop(),
-				a = frame.a, b = frame.b;
-			let op, map;
-
-			count++;
-			if (count > 1000) {
-				throw Error('Cycle?');
-			}
-			if (frame.op && b.__op__) {
-				op = jsonop(frame.op, b.__op__);
-			} else {
-				op = b.__op__ || frame.op;
-			}
-			map = op ? {} : b;
-
-			if (op) {
-				for (const i in b) { if (i !== "__op__") { map[i] = true; } }
-
-				if (op.__all__) {
-					for (const i in a) { map[i] = true; }
-				} else {
-					for (const i in op) { map[i] = true; }
-				}
-			}
-
-			for (const i in map) {
-				opval(a, b, i, b[i] && isOp(b[i].__op__) ? b[i].__op__ :
-					op && (op[i] || op.__all__), stack);
-			}
-		} while (stack.length);
-
-		return el._;
+	function isArray(arr) {
+		return Object.prototype.toString.call(arr) === "[object Array]";
 	}
 
-	return fn(oa, ob, oop);
+	function updater(fn) {
+		return function (a, b) {
+			return typeof a === "undefined" ? deop(b) : fn(a, b);
+		};
+	}
+
+	opfn = {
+		$delete: function (a) { return; },
+		$default: updater(function (a, b) { return a; }),
+		$replace: function (a, b) { return deop(b); },
+
+		$add: updater(function (a, b) { return a + b; }),
+		$mul: updater(function (a, b) { return a * b; }),
+		$min: updater(function (a, b) { return Math.min(a, b); }),
+		$max: updater(function (a, b) { return Math.max(a, b); }),
+		$mod: updater(function (a, b) { return a % b; }),
+
+		$union: updater(function (a, b) {
+			var result = a.slice(0), i = 0, l = b.length;
+			for (; i < l; i++) if (a.indexOf(b[i]) === -1) result.push(b[i]);
+			return result;
+		}),
+		$inter: updater(function (a, b) {
+			var result = [], i = 0, l = b.length;
+			for (; i < l; i++) if (a.indexOf(b[i]) >= 0) result.push(b[i]);
+			return result;
+		}),
+		$remove: updater(function (a, b) {
+			var pos = a.indexOf(b);
+			if (pos >= 0) return a.slice(0, pos).concat(a.slice(pos + 1));
+		}),
+
+		$push: function (a, pos, b) {
+			if (typeof a === "undefined") return;
+			if (pos === null) return a.concat(deop(b));
+			return a.slice(0, pos).concat(deop(b), a.slice(pos));
+		},
+		$chop: function (a, pos, num) {
+			if (typeof a === "undefined") return [];
+			if (pos === null) return a.slice(0, a.length + num);
+			if (pos < 0) pos = a.length + pos;
+			if (num < 0) { pos += num; num = -num; }
+			if (pos < 0) { num += pos; pos = 0; }
+			return a.slice(0, pos).concat(a.slice(pos + num));
+		},
+
+		$merge: updater(function (a, b) {
+			var i = 0, l = b.length, r = a.slice(0);
+			for (; i < l; i++) if (b[i] !== null) r[i] = jsonop(r[i], b[i]);
+			return r;
+		}),
+
+		$append: updater(function (a, b) { return a + b; }),
+
+		$and: updater(function (a, b) { return a && b; }),
+		$or: updater(function (a, b) { return a || b; }),
+		$not: function (a) { return !a; }
+	};
+
+	function isOperator(value) {
+		return (typeof value === "string" && value[0] === "$");
+	}
+
+	function isOperation(value) {
+		var i, l;
+		if (isOperator(value)) return true;
+		if (isArray(value)) {
+			for (i = 0, l = value.length; i < l; i++) {
+				if (isOperator(value[i])) return true;
+			}
+		}
+		return false;
+	}
+
+	function execute(tokens) {
+		var stack = [], i = 0, l = tokens.length, j, fn, args;
+		for(; i < l; i++) if (isOperator(tokens[i])) {
+			fn = opfn[tokens[i]]; args = [];
+			if (typeof fn !== "function") throw Error("NoSuchOp " + tokens[i]);
+			for (j = 0; j < fn.length; j++) args.unshift(stack.pop());
+			stack.push(fn.apply(null, args));
+		} else {
+			stack.push(tokens[i]);
+		}
+		if (stack.length !== 1) throw Error("OpRun " + JSON.stringify(tokens));
+		return stack[0];
+	}
+
+	function merge(left, right) {
+		var i, result = {}, res;
+		for (i in left) result[i] = left[i];
+		for (i in right) {
+			res = jsonop(result[i], right[i]);
+			if (typeof res === "undefined") {
+				delete result[i];
+			} else {
+				result[i] = res;
+			}
+		}
+		return result;
+	}
+
+	function deop(object) {
+		var i, j, clone = object, cloned = false, val;
+
+		if (!apply) return object;
+		if (isOperation(object)) return execute([ undefined ].concat(object));
+		if (typeof object !== "object" || object === null) return object;
+
+		for (i in object) {
+			val = deop(object[i]);
+			if (val !== object[i]) {
+				if (!cloned) {
+					clone = Array.isArray(object) ? [] : {};
+					for (j in object) {
+						if (j === i) break;
+						clone[j] = object[j];
+					}
+					cloned = true;
+				}
+			}
+			if (cloned) clone[i] = val;
+		}
+
+		return clone;
+	}
+
+	function jsonop(left, right) {
+		if (isOperation(right)) {
+			right = isArray(right) ? right : [ right ];
+			if (isOperation(left)) {
+				left = isArray(left) ? left : [ left ];
+				if (!apply) return left.concat(right);
+				return execute([ undefined ].concat(left, right));
+			}
+
+			if (!apply && typeof left === "undefined") return right;
+			return execute([ left ].concat(right));
+		}
+
+		if (typeof left === "object" && left !== null && !isArray(left)) {
+			if (typeof right === "object" && right !== null && !isArray(right)){
+				return merge(left, right);
+			}
+		}
+
+		return typeof right !== "undefined" ? deop(right) : left;
+	}
+
+	return jsonop(left, right);
 }
 
-module.exports = jsonop;
+JO.merge = function (left, right) { return JO(left, right, false); };
+JO.apply = function (left, right) { return JO(left, right, true); };
+
+module.exports = JO;
