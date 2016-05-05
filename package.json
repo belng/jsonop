@@ -2,7 +2,7 @@
   "name": "jsonop",
   "version": "3.0.0",
   "description": "JSON-encoded operations on JSON documents",
-  "main": "src/jsonop",
+  "main": "src/index",
   "scripts": {
     "test": "ava"
   },

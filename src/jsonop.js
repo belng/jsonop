@@ -1,10 +1,5 @@
-/*
-	This file is intentionally written in ES3.
-*/
+module.exports = function (left, right, doMerge) {
 
-"use strict";
-
-function JO (left, right, apply) {
 	var opfn;
 
 	function isArray(arr) {
@@ -116,7 +111,7 @@ function JO (left, right, apply) {
 	function deop(object) {
 		var i, j, clone = object, cloned = false, val;
 
-		if (!apply) return object;
+		if (doMerge) return object;
 		if (isOperation(object)) return execute([ undefined ].concat(object));
 		if (typeof object !== "object" || object === null) return object;
 
@@ -143,11 +138,11 @@ function JO (left, right, apply) {
 			right = isArray(right) ? right : [ right ];
 			if (isOperation(left)) {
 				left = isArray(left) ? left : [ left ];
-				if (!apply) return left.concat(right);
+				if (doMerge) return left.concat(right);
 				return execute([ undefined ].concat(left, right));
 			}
 
-			if (!apply && typeof left === "undefined") return right;
+			if (doMerge && typeof left === "undefined") return right;
 			return execute([ left ].concat(right));
 		}
 
@@ -161,9 +156,4 @@ function JO (left, right, apply) {
 	}
 
 	return jsonop(left, right);
-}
-
-JO.merge = function (left, right) { return JO(left, right, false); };
-JO.apply = function (left, right) { return JO(left, right, true); };
-
-module.exports = JO;
+};
