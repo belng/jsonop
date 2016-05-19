@@ -21,7 +21,7 @@ module.exports = function (left, right, doMerge) {
 		$mul: updater(function (a, b) { return a * b; }),
 		$min: updater(function (a, b) { return Math.min(a, b); }),
 		$max: updater(function (a, b) { return Math.max(a, b); }),
-		$mod: updater(function (a, b) { return a % b; }),
+		$mod: function (a, b) { return typeof a === "undefined" ? 0 : a % b; },
 
 		$union: updater(function (a, b) {
 			var result = a.slice(0), i = 0, l = b.length;
