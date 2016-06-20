@@ -1,6 +1,6 @@
 {
   "name": "jsonop",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "JSON-encoded operations on JSON documents",
   "main": "src/index",
   "scripts": {

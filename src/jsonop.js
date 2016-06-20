@@ -66,7 +66,7 @@ module.exports = function (left, right, doMerge) {
 	};
 
 	function isOperator(value) {
-		return (typeof value === "string" && value[0] === "$");
+		return (typeof value === "string" && value in opfn);
 	}
 
 	function isOperation(value) {
